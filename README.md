@@ -42,11 +42,8 @@ A python interface for interacting with the openai api. This allows a user class
     ```bash
     pip3 install -r requirements.txt
     ```
-4. Create any env variables
-    a. 
-    ```bash
-    touch .env
-    ```
+4. Create any env variables.  
+    a. `touch .env`  
     b. Add line `SECRET_KEY='<YOUR OPEN AI API KEY>'`
     
 4. Run the development server:
