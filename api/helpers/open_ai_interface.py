@@ -1,4 +1,3 @@
-import requests
 import os
 from dotenv import load_dotenv
 import openai
@@ -19,20 +18,16 @@ def ensure_valid_input(input_desc):
 def get_images_from_desc(sentence, n=4):
     if sentence:
         response = openai.Image.create(
-            prompt="A cute baby sea otter",
-            n=2,
-            size="1024x1024"
+            prompt=sentence,
+            n=4,
+            size="512x512"
             )
         
-        images = openai.Image.to_dict()
-
-            # Print the image URLs
-        for image in images.items():
-            print(image)
+        print(response)
 
 
 if __name__ == '__main__':
-    test_prompt = 'A sea otter that has found a shiny new rock'
+    test_prompt = 'A dog happy that he just won the slot machine'
     # print(dir(openai.Image))
     get_images_from_desc(test_prompt)
     # openai.Image.list()
