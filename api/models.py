@@ -22,7 +22,6 @@ class Item(Base):
     description = Column(String, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
-
     owner = relationship("User", back_populates="items")
 
 
@@ -31,6 +30,9 @@ class ItemURL(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     item_id = Column(Integer, ForeignKey("items.id"))
-    item = relationship("Item", back_populates="item_urls")
-    
+    content = Column(String,nullable=False)
+
+    item = relationship("Item", backref="item_urls")
+
+
 

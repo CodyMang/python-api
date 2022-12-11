@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from .. import models, schemas
+from . import open_ai_interface as oai
 
 
 def get_user(db: Session, user_id: int):
@@ -15,7 +16,7 @@ def get_user_by_username(db: Session, username: str):
     """
     Get user by User username.
     :param db: The database session.
-    :param email: The User Username.
+    :param username: The User Username.
     """
     return db.query(models.User).filter(models.User.username == username).first()
 
@@ -37,7 +38,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     :param user: The user schema.
     """
     fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.username, hashed_password=fake_hashed_password)
+    db_user = models.User(username=user.username, hashed_password=fake_hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -81,4 +82,14 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
+
+    response = oai.get_images_from_desc(db_item.description).to_dict()
+
+    for obj in response['data']:
+        item_url = models.ItemURL(item_id=db_item.id,content=obj['url'])
+        db.add(item_url)
+
+    db.commit()
+    db.refresh(db_item)
+
     return db_item

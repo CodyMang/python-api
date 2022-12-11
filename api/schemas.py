@@ -9,9 +9,11 @@ class ItemCreate(ItemBase):
     pass
 
 
-class ItemURL(ItemBase):
+class ItemURL(BaseModel):
     content: HttpUrl
-
+    class Config:
+        orm_mode = True
+    
 
 class Item(ItemBase):
     id: int

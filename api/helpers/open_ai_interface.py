@@ -7,27 +7,27 @@ load_dotenv(".env")
 # Get the value of the "SECRET_KEY" variable
 openai.api_key = os.getenv("SECRET_KEY")
 
-# OPEN_AI_API = 'https://api.openai.com/v1/images/generations'
-
-def ensure_valid_input(input_desc):
-    if not input_desc:
-        return False
-    if len(input_desc.split(' ')) < 5:
-        return False
 
 def get_images_from_desc(sentence, n=4):
     if sentence:
-        response = openai.Image.create(
-            prompt=sentence,
-            n=4,
-            size="512x512"
-            )
-        
-        print(response)
-
+        try:
+            response = openai.Image.create(
+                prompt=sentence,
+                n=n,
+                size="1024x1024"
+                )
+            return response
+        except Exception as e:
+            print(e)
+            return None
+    else:
+        print("No input given")
 
 if __name__ == '__main__':
-    test_prompt = 'A dog happy that he just won the slot machine'
+    test_prompt = 'A dog sleeping next to a christmas tree'
     # print(dir(openai.Image))
-    get_images_from_desc(test_prompt)
+    result = get_images_from_desc(test_prompt)
+    res = result.to_dict()
+    for url in res['data']:
+        print(url['url'])
     # openai.Image.list()
