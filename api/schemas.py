@@ -1,5 +1,6 @@
 from pydantic import BaseModel, HttpUrl
 
+from typing import Union
 
 class ItemBase(BaseModel):
     description: str
@@ -39,3 +40,14 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+class UserInDB(UserBase):
+    hashed_password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Union[str, None] = None

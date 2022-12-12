@@ -12,4 +12,4 @@ app.include_router(items.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Hello to the FastAPI Boilerplate!"}
+    return {"message": "Hello, welcome to simple Open AI interface!"}

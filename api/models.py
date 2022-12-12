@@ -33,6 +33,4 @@ class ItemURL(Base):
     content = Column(String,nullable=False)
 
     item = relationship("Item", backref="item_urls")
-
-
-
+ 
