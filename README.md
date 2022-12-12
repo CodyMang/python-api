@@ -7,24 +7,8 @@ A python interface for interacting with the openai api. This allows a user class
 ## Features
 - SQLAlchemy
 - Pydantic
-
-## File Structure
-```
-.
-├── api
-│   ├── __init__.py
-│   ├── database.py
-│   ├── main.py
-|   ├── models.py
-|   ├── schemas.py
-│   └── routers
-│   │   ├── __init__.py
-│   │   ├── items.py
-│   │   └── users.py
-│   └── helpers
-│       ├── __init__.py
-│       └── crud.py
-```
+- OAuth2 Bearer Token
+- Python Hashing
 
 ## Quick Start
 1. Clone the repo:
