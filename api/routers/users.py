@@ -2,7 +2,6 @@ from .. import schemas, database
 import os
 from api.crud import user_crud,token_crud
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
@@ -39,12 +38,6 @@ async def read_user(user_id: int, db: Session = Depends(database.get_db)):
     return db_user
 
 
-@router.post("/users/create/items/", response_model=schemas.Item )
-async def create_item_for_user(
-    item: schemas.ItemCreate, db: Session = Depends(database.get_db),
-    current_user: schemas.User = Depends(token_crud.get_current_active_user)
-):
-    return user_crud.create_user_item(db=db, item=item, user_id=current_user.id)
 
 # @router.post("/users/{user_id}/items/", response_model=schemas.Item)
 # async def create_item_for_user(
@@ -54,7 +47,7 @@ async def create_item_for_user(
 
 
 @router.post("/token", response_model=schemas.Token)
-async def login_for_access_token(user:schemas.UserCreate,db:Session = Depends(database.get_db)):
+async def login_for_access_token(user:schemas.UserCreate, db:Session = Depends(database.get_db)):
     user = user_crud.authenticate(db, user.username, user.password)
     if not user:
         raise HTTPException(
@@ -69,12 +62,6 @@ async def login_for_access_token(user:schemas.UserCreate,db:Session = Depends(da
     return schemas.Token(**{"access_token": access_token, "token_type": "bearer"})
 
 
-@router.post("/token", response_model=schemas.Token)
-async def login_for_access_token_form(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = schemas.UserCreate(username=form_data.username, password=form_data.password)
-    return login_for_access_token(user)
-
-
-@router.get("/users/me/", response_model=schemas.User)
+@router.get("/me", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(token_crud.get_current_active_user)):
     return current_user

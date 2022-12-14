@@ -6,7 +6,7 @@ load_dotenv(".env")
 
 # Get the value of the "SECRET_KEY" variable
 openai.api_key = os.getenv("SECRET_KEY")
-
+assert openai.api_key, "SECRET_KEY value should be in .env file"
 
 def get_images_from_desc(sentence, n=4):
     if sentence:

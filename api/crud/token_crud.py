@@ -1,4 +1,3 @@
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -12,6 +11,8 @@ import os
 
 load_dotenv(".env")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
+assert JWT_SECRET_KEY, "JWT_SECRET_KEY value should be in .env file"
 
 ALGORITHM = "HS256"
 
@@ -40,7 +41,8 @@ async def get_current_user(db:Session = Depends(database.get_db), token: str = D
         if username is None:
             raise credentials_exception
         token_data = schemas.TokenData(username=username)
-    except JWTError:
+    except JWTError as e:
+        print(e)
         raise credentials_exception
     user = user_crud.get_user_by_username(db, username=token_data.username)
     if user is None:    
@@ -48,6 +50,6 @@ async def get_current_user(db:Session = Depends(database.get_db), token: str = D
     return user
 
 async def get_current_active_user(current_user: schemas.User = Depends(get_current_user)):
-    if current_user.disabled:
+    if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

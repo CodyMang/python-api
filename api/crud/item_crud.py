@@ -12,6 +12,16 @@ def get_item_by_id(db: Session, id:int):
     return db.query(models.Item).filter(models.Item.id == id).first()
 
 
+def get_items(db: Session, skip: int = 0, limit: int = 100):
+    """
+    Get all items.
+    :param db: The database session.
+    :param skip: The offset used when paging.
+    :param limit: The number of items to retrieve per query.
+    """
+    return db.query(models.Item).offset(skip).limit(limit).all()
+
+
 def get_image_url_by_id(db: Session, id:int):
     """
     Get one item image url
