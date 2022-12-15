@@ -11,7 +11,8 @@ class ItemCreate(ItemBase):
 
 
 class ItemURL(BaseModel):
-    content: HttpUrl
+    id: str
+    location: str
     class Config:
         orm_mode = True
     

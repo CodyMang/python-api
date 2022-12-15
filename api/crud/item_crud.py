@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..helpers import open_ai_interface as oai
-
+from uuid import uuid4
+from base64 import b64decode
 
 def get_item_by_id(db: Session, id:int):
     """
@@ -43,12 +44,40 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db.refresh(db_item)
 
     response = oai.get_images_from_desc(db_item.description).to_dict()
-
-    for obj in response['data']:
-        item_url = models.ItemURL(item_id=db_item.id,content=obj['url'])
-        db.add(item_url)
-
+    if response:
+    
+        for obj in response['data']:
+            try:
+                file_id =  str(uuid4())
+                file_name = f'/images/{file_id}.png'
+                file_content = b64decode(obj['b64_json'])
+                with open(f'.{file_name}','xb') as f:
+                    f.write(file_content)
+                item_url = models.ItemURL(
+                    id=file_id,
+                    item_id=db_item.id,
+                    location=file_name
+                )
+                db.add(item_url)
+            except Exception as e:
+                print(f"Tried creating file {e}")
+    else:
+        return None
     db.commit()
     db.refresh(db_item)
 
     return db_item
+
+
+
+def get_user_item_by_path(db: Session, image_id:str):
+    """
+    Get a image by path
+    """
+    if image_id.endswith('.png'):
+        image_id = image_id[:-4]
+    print(image_id)
+    item_url = db.query(models.ItemURL).filter(models.ItemURL.id == image_id).first()
+    if not item_url:
+        return None
+    return item_url.location

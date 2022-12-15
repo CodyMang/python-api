@@ -28,9 +28,9 @@ class Item(Base):
 class ItemURL(Base):
     __tablename__ = "item_urls"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     item_id = Column(Integer, ForeignKey("items.id"))
-    content = Column(String,nullable=False)
+    location = Column(String, nullable=False)
 
     item = relationship("Item", backref="item_urls")
  
