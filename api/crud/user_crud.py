@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from api.auth.password import get_password_hash, verify_password
 from .. import models, schemas
-from .token_crud import oauth2_scheme
+from .token_crud import oauth2_scheme, create_access_token
 
 def get_user(db: Session, user_id: int):
     """
@@ -50,7 +50,18 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user    
+
+    access_token = create_access_token(
+        data={"sub": db_user.username}
+    )
+    
+
+    new_user = schemas.UserWithToken(
+        username=db_user.username, 
+        access_token=access_token,
+        token_type= "bearer"
+    )
+    return new_user    
 
 
 

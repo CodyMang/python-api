@@ -14,10 +14,12 @@ async def read_items(id:int, db: Session = Depends(database.get_db)):
     return items
 
   
-@router.get("/items/", response_model=list[schemas.Item])
+
+@router.get("/items/", response_model=schemas.ResponseItem)
 async def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
-    items = item_crud.get_items(db, skip=skip, limit=limit)
-    return items
+    items = item_crud.get_items(db, skip=skip, limit=limit) 
+
+    return schemas.ResponseItem(data=items)
 
 
 @router.get("/images/{image_id}")

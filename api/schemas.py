@@ -1,6 +1,6 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
+from typing import Union, List
 
-from typing import Union
 
 class ItemBase(BaseModel):
     description: str
@@ -42,8 +42,10 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
+
 class UserInDB(UserBase):
     hashed_password: str
+
 
 class Token(BaseModel):
     access_token: str
@@ -52,3 +54,10 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Union[str, None] = None
+
+
+class UserWithToken(Token):
+    username :str
+    
+class ResponseItem(BaseModel):
+    data: list[Item] = []
