@@ -39,7 +39,7 @@ async def read_user(user_id: int, db: Session = Depends(database.get_db)):
     return db_user
 
 
-@router.post("/token", response_model=schemas.Token)
+@router.post("/token/", response_model=schemas.ResponseToken)
 async def login_for_access_token(user:schemas.UserCreate, db:Session = Depends(database.get_db)):
     user = user_crud.authenticate(db, user.username, user.password)
     if not user:
@@ -52,9 +52,10 @@ async def login_for_access_token(user:schemas.UserCreate, db:Session = Depends(d
     access_token = token_crud.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return schemas.Token(**{"access_token": access_token, "token_type": "bearer"})
+    token_response = schemas.ResponseToken(data=schemas.Token(access_token= access_token,token_type= "bearer"))
+    return token_response
 
 
-@router.get("/me", response_model=schemas.User)
+@router.get("/auth/", response_model=schemas.ResponseAuth)
 async def read_users_me(current_user: schemas.User = Depends(token_crud.get_current_active_user)):
-    return current_user
+    return schemas.ResponseAuth(success=True)

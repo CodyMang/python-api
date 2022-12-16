@@ -15,11 +15,11 @@ async def read_items(id:int, db: Session = Depends(database.get_db)):
 
   
 
-@router.get("/items/", response_model=schemas.ResponseItem)
+@router.get("/items/", response_model=schemas.ResponseListItem)
 async def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
     items = item_crud.get_items(db, skip=skip, limit=limit) 
 
-    return schemas.ResponseItem(data=items)
+    return schemas.ResponseListItem(data=items)
 
 
 @router.get("/images/{image_id}")
@@ -30,13 +30,14 @@ async def read_items(image_id:str, db: Session = Depends(database.get_db)):
     return FileResponse(f'./{item_url}',media_type='png')
 
 
-@router.post("/items/create", response_model=schemas.Item )
+@router.post("/items/create", response_model=schemas.ResponseItem )
 async def create_item_for_user(
     item: schemas.ItemCreate, db: Session = Depends(database.get_db),
     current_user: schemas.User = Depends(token_crud.get_current_active_user)
 ):
     new_item = item_crud.create_user_item(db=db, item=item, user_id=current_user.id)
     if new_item:
-        return new_item
+        response = schemas.ResponseItem(data=new_item)
+        return response
     else: 
         raise HTTPException(status_code=400, detail="Prompt is not accepted")

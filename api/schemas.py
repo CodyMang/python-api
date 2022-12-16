@@ -60,4 +60,13 @@ class UserWithToken(Token):
     username :str
     
 class ResponseItem(BaseModel):
+    data: Item
+
+class ResponseListItem(BaseModel):
     data: list[Item] = []
+
+class ResponseToken(BaseModel):
+    data: Token
+
+class ResponseAuth(BaseModel):
+    success: bool = False

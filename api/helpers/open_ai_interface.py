@@ -8,13 +8,13 @@ load_dotenv(".env")
 openai.api_key = os.getenv("SECRET_KEY")
 assert openai.api_key, "SECRET_KEY value should be in .env file"
 
-def get_images_from_desc(sentence, n=4):
+def get_images_from_desc(sentence, n=1):
     if sentence:
         try:
             response = openai.Image.create(
                 prompt=sentence,
                 n=n,
-                size="512x512",
+                size="1024x1024",
                 # size="1024x1024"
                 response_format="b64_json"
                 )

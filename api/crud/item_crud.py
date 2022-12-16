@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import  HTTPException
 from .. import models, schemas
 from ..helpers import open_ai_interface as oai
 from uuid import uuid4
@@ -45,7 +46,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 
     response = oai.get_images_from_desc(db_item.description).to_dict()
     if response:
-    
+        
         for obj in response['data']:
             try:
                 file_id =  str(uuid4())
@@ -60,7 +61,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
                 )
                 db.add(item_url)
             except Exception as e:
-                print(f"Tried creating file {e}")
+                raise HTTPException(status_code=400, detail=f"An error occured with OpenAI API: {e}")
     else:
         return None
     db.commit()
@@ -76,7 +77,7 @@ def get_user_item_by_path(db: Session, image_id:str):
     """
     if image_id.endswith('.png'):
         image_id = image_id[:-4]
-    print(image_id)
+
     item_url = db.query(models.ItemURL).filter(models.ItemURL.id == image_id).first()
     if not item_url:
         return None
